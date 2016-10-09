@@ -11,13 +11,13 @@ import UIKit
 class ViewController: UIViewController {
     
     
-    @IBOutlet private weak var display: UILabel!
+    @IBOutlet fileprivate weak var display: UILabel!
     
-    @IBOutlet private weak var descriptionLabel: UILabel!
+    @IBOutlet fileprivate weak var descriptionLabel: UILabel!
     
-    private var userIsInTheMiddleOfTyping = false
+    fileprivate var userIsInTheMiddleOfTyping = false
     
-    private var displayValue: Double {
+    fileprivate var displayValue: Double {
         get {
             return Double(display.text!)!
         }
@@ -28,22 +28,39 @@ class ViewController: UIViewController {
         
     }
     
-    private var floatingPointAdded = false
-    @IBAction func clearEverything(sender: AnyObject) {
-        brain = CalculatorBrain()
+    var savedProgram: CalculatorBrain.PropertyList?
+    
+    
+    @IBAction func save() {
+        savedProgram = brain.program
+    }
+    
+    
+    @IBAction func restore() {
+        if savedProgram != nil {
+            brain.program = savedProgram!
+            displayValue  = brain.result
+            descriptionLabel.text = brain.getDescriptionOfOperations()
+        }
+    }
+    
+    
+    fileprivate var floatingPointAdded = false
+    @IBAction func clearEverything(_ sender: AnyObject) {
+        brain.clear()
         displayValue = 0
         descriptionLabel.text = "..."
     }
     
-    @IBAction func addDot(sender: UIButton) {
+    @IBAction func addDot(_ sender: UIButton) {
         if !floatingPointAdded && userIsInTheMiddleOfTyping{
             display.text = display.text! + "."
             floatingPointAdded = true
         }
     }
-    private var brain = CalculatorBrain()
+    fileprivate var brain = CalculatorBrain()
     
-    @IBAction private func performOperation(sender: UIButton) {
+    @IBAction fileprivate func performOperation(_ sender: UIButton) {
         if userIsInTheMiddleOfTyping {
             brain.setOperand(displayValue)
             userIsInTheMiddleOfTyping = false
@@ -57,7 +74,7 @@ class ViewController: UIViewController {
         descriptionLabel.text = brain.getDescriptionOfOperations()
     }
     
-    @IBAction private func touchDigit(sender: UIButton) {
+    @IBAction fileprivate func touchDigit(_ sender: UIButton) {
         let digit = sender.currentTitle!
         let currentTextInDisplay = display.text!
         if userIsInTheMiddleOfTyping {

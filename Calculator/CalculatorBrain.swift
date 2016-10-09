@@ -12,14 +12,17 @@ class CalculatorBrain
 {
     private var accumulator = 0.0
     
-    func setOperand(operand: Double) {
+    private var internalProgram = [AnyObject]()
+    
+    func setOperand(_ operand: Double) {
         accumulator = operand
-        if description == ""{
-            description = String(operand)
-        }else if !isPartialResult(){
-            description = String(operand)
-            changedOperand = false
+    
+        if !isPartialResult(){
+            descriptionList = []
         }
+        
+        internalProgram.append(operand as AnyObject)
+        descriptionList.append(operand as AnyObject)
     }
     
     func isPartialResult() -> Bool {
@@ -27,26 +30,26 @@ class CalculatorBrain
     }
     
     var operations: Dictionary<String,Operation> = [
-        "∏" : Operation.Constant(M_PI),
-        "e" : Operation.Constant(M_E),
-        "DEL": Operation.Constant(0.0),
-        "cos": Operation.UnaryOperation(cos),
-        "√"  : Operation.UnaryOperation(sqrt),
-        "sin": Operation.UnaryOperation(sin),
-        "ln" : Operation.UnaryOperation(log),
-        "×"  : Operation.BinaryOperation({ $0 * $1 }),
-        "÷"  : Operation.BinaryOperation({ $0 / $1 }),
-        "+"  : Operation.BinaryOperation({ $0 + $1 }),
-        "-"  : Operation.BinaryOperation({ $0 - $1 }),
-        "ˆ"  : Operation.BinaryOperation(pow),
-        "="  : Operation.Equals
+        "∏" : Operation.constant(M_PI),
+        "e" : Operation.constant(M_E),
+        "DEL": Operation.constant(0.0),
+        "cos": Operation.unaryOperation(cos),
+        "√"  : Operation.unaryOperation(sqrt),
+        "sin": Operation.unaryOperation(sin),
+        "ln" : Operation.unaryOperation(log),
+        "×"  : Operation.binaryOperation({ $0 * $1 }),
+        "÷"  : Operation.binaryOperation({ $0 / $1 }),
+        "+"  : Operation.binaryOperation({ $0 + $1 }),
+        "-"  : Operation.binaryOperation({ $0 - $1 }),
+        "ˆ"  : Operation.binaryOperation(pow),
+        "="  : Operation.equals
     ]
     
     enum Operation {
-        case Constant(Double)
-        case UnaryOperation((Double) -> Double)
-        case BinaryOperation((Double,Double) -> Double)
-        case Equals
+        case constant(Double)
+        case unaryOperation((Double) -> Double)
+        case binaryOperation((Double,Double) -> Double)
+        case equals
     }
     
     private struct PendingBinaryOperationInfo{
@@ -56,9 +59,41 @@ class CalculatorBrain
     
     private var pending : PendingBinaryOperationInfo?
     
-    private var description : String = ""
+    typealias PropertyList = [AnyObject]
+    
+    var program: PropertyList {
+        get {
+            return internalProgram
+        }
+        
+        set {
+            clear()
+            if let arrayOfOps = newValue as? [AnyObject]{
+                for op in arrayOfOps{
+                    if let operand = op as? Double{
+                        setOperand(operand)
+                    }else if let operation = op as? String{
+                        performOperation(operation)
+                    }
+                }
+            }
+        }
+    }
+    
+    func clear(){
+        accumulator = 0.0
+        pending = nil
+        descriptionList = []
+    }
+
+    private var descriptionList : PropertyList = []
     
     internal func getDescriptionOfOperations() -> String {
+        var description = ""
+        for action in descriptionList{
+            description = description + String(describing: action)
+        }
+        
         if(isPartialResult()){
             return description + "..."
         }else{
@@ -68,42 +103,44 @@ class CalculatorBrain
     
     var changedOperand = false
     
-    func performOperation(symbol: String) {
+    func performOperation(_ symbol: String) {
         if let operation = operations[symbol] {
+            
+            internalProgram.append(symbol as AnyObject)
+            
             switch operation {
-            case .Constant(let constant):
+            case .constant(let constant):
                 accumulator = constant;
-                description = description + symbol
+                descriptionList.append(symbol as AnyObject)
                 changedOperand = true
-            case .UnaryOperation(let function):
+            case .unaryOperation(let function):
                 
                 if isPartialResult(){
-                    description = description + symbol + String(accumulator)
+                    descriptionList.insert(symbol as AnyObject, at: descriptionList.count - 1)
                 }else{
-                    description = symbol + description
+                    descriptionList.insert(symbol as AnyObject, at: 0)
+                    descriptionList.insert("(" as AnyObject, at: 1)
+                    descriptionList.append(")" as AnyObject)
                 }
                 
                 accumulator = function(accumulator);
                 changedOperand = true
-            case .BinaryOperation(let function):
+            case .binaryOperation(let function):
                 
                 executePendingBinaryOperation()
                 
-                description = description + symbol
+                descriptionList.append(symbol as AnyObject)
                 pending = PendingBinaryOperationInfo(binaryFunction: function, firstOperand: accumulator)
-            case .Equals:
+            case .equals:
                 executePendingBinaryOperation()
             }
         }
-        
-        print(getDescriptionOfOperations())
-        
     }
     
     func executePendingBinaryOperation(){
         if pending != nil{
-            if !changedOperand{
-                description = description + String(accumulator)
+            if isPartialResult() && changedOperand{
+                descriptionList.append(accumulator as AnyObject)
             }
             
             accumulator = pending!.binaryFunction(pending!.firstOperand, accumulator)
