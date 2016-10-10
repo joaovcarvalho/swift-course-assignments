@@ -28,8 +28,22 @@ class ViewController: UIViewController {
         
     }
     
+    private func updateDisplay(){
+        displayValue = brain.result
+        descriptionLabel.text = brain.getDescriptionOfOperations()
+    }
+    
     var savedProgram: CalculatorBrain.PropertyList?
     
+    @IBAction func setVariable() {
+        brain.setVariable(variableName: "M", value: displayValue)
+        updateDisplay()
+        userIsInTheMiddleOfTyping = false
+    }
+    
+    @IBAction func setVariableOperand() {
+        brain.setOperand("M")
+    }
     
     @IBAction func save() {
         savedProgram = brain.program
@@ -39,15 +53,30 @@ class ViewController: UIViewController {
     @IBAction func restore() {
         if savedProgram != nil {
             brain.program = savedProgram!
-            displayValue  = brain.result
-            descriptionLabel.text = brain.getDescriptionOfOperations()
+            updateDisplay()
         }
     }
     
+    @IBAction func undo() {
+        if userIsInTheMiddleOfTyping {
+            var digits: String = display.text!
+            digits.remove(at: digits.index(before: digits.endIndex))
+            display.text = digits
+            if(display.text!.characters.count < 1){
+                display.text = String(0.0)
+            }
+        }else{
+            brain.undo()
+            updateDisplay()
+        }
+    }
     
     fileprivate var floatingPointAdded = false
     @IBAction func clearEverything(_ sender: AnyObject) {
         brain.clear()
+        brain.clearVariables()
+        floatingPointAdded = false
+        userIsInTheMiddleOfTyping = false
         displayValue = 0
         descriptionLabel.text = "..."
     }
@@ -69,9 +98,8 @@ class ViewController: UIViewController {
             brain.performOperation(mathematicalSymbol)
         }
         
-        displayValue = brain.result
         floatingPointAdded = false
-        descriptionLabel.text = brain.getDescriptionOfOperations()
+        updateDisplay()
     }
     
     @IBAction fileprivate func touchDigit(_ sender: UIButton) {

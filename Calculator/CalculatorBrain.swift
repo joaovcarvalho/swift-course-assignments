@@ -14,6 +14,26 @@ class CalculatorBrain
     
     private var internalProgram = [AnyObject]()
     
+    private var variableNames: Dictionary<String, Double> = [:]
+    
+    public func setVariable(variableName:String, value:Double){
+        variableNames[variableName] = value
+        program = internalProgram
+    }
+    
+    func setOperand(_ variableName:String){
+        if let value = variableNames[variableName] {
+            accumulator = value
+        }else{
+            accumulator = 0.0
+        }
+        
+        changedOperand = false
+        internalProgram.append(variableName as AnyObject)
+        descriptionList.append(variableName as AnyObject)
+        
+    }
+    
     func setOperand(_ operand: Double) {
         accumulator = operand
     
@@ -32,7 +52,6 @@ class CalculatorBrain
     var operations: Dictionary<String,Operation> = [
         "∏" : Operation.constant(M_PI),
         "e" : Operation.constant(M_E),
-        "DEL": Operation.constant(0.0),
         "cos": Operation.unaryOperation(cos),
         "√"  : Operation.unaryOperation(sqrt),
         "sin": Operation.unaryOperation(sin),
@@ -77,13 +96,26 @@ class CalculatorBrain
                     }
                 }
             }
+            
         }
+    }
+    
+    func undo(){
+        internalProgram.remove(at: internalProgram.index(before: internalProgram.endIndex))
+        program = internalProgram
+        print("Undo called")
+        print(internalProgram)
     }
     
     func clear(){
         accumulator = 0.0
         pending = nil
         descriptionList = []
+        internalProgram = []
+    }
+    
+    func clearVariables(){
+        variableNames = [:]
     }
 
     private var descriptionList : PropertyList = []
@@ -134,14 +166,19 @@ class CalculatorBrain
             case .equals:
                 executePendingBinaryOperation()
             }
+        }else if let variable = variableNames[symbol]{
+            accumulator = variable
+            descriptionList.append(symbol as AnyObject)
+            changedOperand = false
+            
         }
     }
     
     func executePendingBinaryOperation(){
         if pending != nil{
-            if isPartialResult() && changedOperand{
+            /*if isPartialResult() && changedOperand{
                 descriptionList.append(accumulator as AnyObject)
-            }
+            }*/
             
             accumulator = pending!.binaryFunction(pending!.firstOperand, accumulator)
             pending = nil
