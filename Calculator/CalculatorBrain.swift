@@ -112,6 +112,7 @@ class CalculatorBrain
         pending = nil
         descriptionList = []
         internalProgram = []
+        changedOperand = false
     }
     
     func clearVariables(){
@@ -167,6 +168,7 @@ class CalculatorBrain
                 executePendingBinaryOperation()
             }
         }else if let variable = variableNames[symbol]{
+            internalProgram.append(symbol as AnyObject)
             accumulator = variable
             descriptionList.append(symbol as AnyObject)
             changedOperand = false
@@ -176,9 +178,6 @@ class CalculatorBrain
     
     func executePendingBinaryOperation(){
         if pending != nil{
-            /*if isPartialResult() && changedOperand{
-                descriptionList.append(accumulator as AnyObject)
-            }*/
             
             accumulator = pending!.binaryFunction(pending!.firstOperand, accumulator)
             pending = nil

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="0az-yg-X2X">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
@@ -7,10 +7,71 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Navigation Controller-->
+        <scene sceneID="mkS-tr-knK">
+            <objects>
+                <navigationController id="lfZ-WQ-MmZ" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ySE-2E-Oxy">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="BIa-Yq-XgZ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="60j-gk-feb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-332" y="-228"/>
+        </scene>
+        <!--Split View Controller-->
+        <scene sceneID="jqm-UY-wWa">
+            <objects>
+                <splitViewController id="0az-yg-X2X" sceneMemberID="viewController">
+                    <connections>
+                        <segue destination="lfZ-WQ-MmZ" kind="relationship" relationship="masterViewController" id="wDX-ok-WAt"/>
+                        <segue destination="5JC-TW-xTb" kind="relationship" relationship="detailViewController" id="kxe-fe-wsm"/>
+                    </connections>
+                </splitViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qmH-aO-H4p" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1284" y="99"/>
+        </scene>
+        <!--Graph View Controller-->
+        <scene sceneID="LDp-1R-tff">
+            <objects>
+                <viewController id="5JC-TW-xTb" customClass="GraphViewController" customModule="Calculator" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Rzc-kl-XXm"/>
+                        <viewControllerLayoutGuide type="bottom" id="Omn-P3-CyN"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="9AT-e1-wrq">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KIX-Oz-HKK" customClass="GraphView" customModule="Calculator" customModuleProvider="target">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="KIX-Oz-HKK" firstAttribute="top" secondItem="9AT-e1-wrq" secondAttribute="top" id="0xE-hW-GIi"/>
+                            <constraint firstItem="KIX-Oz-HKK" firstAttribute="bottom" secondItem="Omn-P3-CyN" secondAttribute="top" id="QPy-mT-5eF"/>
+                            <constraint firstItem="KIX-Oz-HKK" firstAttribute="leading" secondItem="9AT-e1-wrq" secondAttribute="leading" id="Z3x-Iy-sL2"/>
+                            <constraint firstAttribute="trailing" secondItem="KIX-Oz-HKK" secondAttribute="trailing" id="oAG-Ww-xHI"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="graphView" destination="KIX-Oz-HKK" id="cGI-4f-4R7"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6tS-Xk-Rkv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-332" y="513.19340329835086"/>
+        </scene>
+        <!--Calculator View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Calculator" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="CalculatorViewController" customModule="Calculator" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -20,7 +81,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="PBO-3y-rVw">
-                                <frame key="frameInset" minX="20" minY="20" width="343" height="647"/>
+                                <frame key="frameInset" minX="20" minY="20" width="343" height="603"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bfb-Gt-itY">
                                         <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -92,11 +153,12 @@
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="huw-IY-XZI">
                                                         <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <state key="normal" title="ln">
+                                                        <state key="normal" title="Graph">
                                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                         </state>
                                                         <connections>
-                                                            <action selector="performOperation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bCv-u1-Zet"/>
+                                                            <action selector="graphProgram:" destination="BYZ-38-t0r" eventType="touchUpInside" id="98R-hO-tLv"/>
+                                                            <segue destination="5JC-TW-xTb" kind="showDetail" identifier="showGraph" id="jWB-Mp-DiT"/>
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fhb-6M-LCJ">
@@ -309,6 +371,7 @@
                             <constraint firstItem="PBO-3y-rVw" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="hFo-S8-zaL"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="RNe-8A-VR5"/>
                     <connections>
                         <outlet property="descriptionLabel" destination="E8t-bB-lvx" id="nMx-n2-Ni6"/>
                         <outlet property="display" destination="Bfb-Gt-itY" id="wP4-jE-SZg"/>
@@ -316,7 +379,10 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="305" y="399"/>
+            <point key="canvasLocation" x="686" y="-228"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="kxe-fe-wsm"/>
+    </inferredMetricsTieBreakers>
 </document>

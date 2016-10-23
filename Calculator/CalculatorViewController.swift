@@ -8,16 +8,16 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class CalculatorViewController: UIViewController {
     
     
-    @IBOutlet fileprivate weak var display: UILabel!
+    @IBOutlet private weak var display: UILabel!
     
-    @IBOutlet fileprivate weak var descriptionLabel: UILabel!
+    @IBOutlet private weak var descriptionLabel: UILabel!
     
-    fileprivate var userIsInTheMiddleOfTyping = false
+    private var userIsInTheMiddleOfTyping = false
     
-    fileprivate var displayValue: Double {
+    private var displayValue: Double {
         get {
             return Double(display.text!)!
         }
@@ -27,6 +27,12 @@ class ViewController: UIViewController {
         }
         
     }
+    
+    @IBAction func graphProgram(_ sender: AnyObject) {
+        
+    }
+    
+    
     
     private func updateDisplay(){
         displayValue = brain.result
@@ -114,6 +120,39 @@ class ViewController: UIViewController {
         
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let id = segue.identifier {
+            switch id {
+            case "showGraph":
+                if brain.isPartialResult(){
+                    
+                }
+                
+                if let vc = segue.destination as? GraphViewController{
+                    vc.setCalculateFunction(calculateFunction: { [ weak selfWeak = self ] in
+                        selfWeak?.brain.setVariable(variableName: "M", value: $0)
+                        return selfWeak!.brain.result
+                    })
+                    
+                    vc.setDescriptor(desc: { [weak selfWeak = self] in
+                            return selfWeak!.brain.getDescriptionOfOperations()
+                        })
+                }
+                
+            default:
+                break
+            }
+        }
+    }
+    
+    
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        return !brain.isPartialResult()
+    }
+//    override func shouldPerformSegueWithIdentifier(identifier: String?, sender: AnyObject?) -> Bool
+//    {
+//        return !brain.isPartialResult()
+//    }
     
 }
 
