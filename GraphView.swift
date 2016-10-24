@@ -91,13 +91,17 @@ class GraphView: UIView
         
         while let newPoint = alignedPoint(x: p.x + 1.0, y: p.y, insideBounds: bounds) {
             
+            print(newPoint)
             var graphPoint = getGraphPoint(p: p)
             
             if let calc = calculator{
                 graphPoint.y = CGFloat(calc(Double(graphPoint.x)))
             }
             
+            print(graphPoint)
+            
             let pixelPoint = getPixelPoint(p: graphPoint)
+            print(pixelPoint)
             
             if let calculatedPoint = alignedPoint(x: pixelPoint.x, y: pixelPoint.y){
                 path.addLine(to: calculatedPoint)
@@ -131,13 +135,13 @@ class GraphView: UIView
     }
     
     private func getGraphPoint(p: CGPoint) -> CGPoint{
-        let graph_x = (origin.x-p.x)/pointsPerUnit
+        let graph_x = (-origin.x+p.x)/pointsPerUnit
         let graph_y = (origin.y-p.y)/pointsPerUnit
         return CGPoint(x: graph_x,y: graph_y)
     }
     
     private func getPixelPoint(p: CGPoint) -> CGPoint{
-        let pixel_x = origin.x-(p.x*pointsPerUnit)
+        let pixel_x = origin.x+(p.x*pointsPerUnit)
         let pixel_y = origin.y-(p.y*pointsPerUnit)
         return CGPoint(x: pixel_x,y: pixel_y)
     }
